@@ -1,0 +1,30 @@
+function prompt_orgmir_precmd {
+  git-info
+}
+
+function prompt_orgmir_setup {
+  setopt LOCAL_OPTIONS
+  unsetopt XTRACE KSH_ARRAYS
+  prompt_opts=(cr percent subst)
+
+  # Load required functions.
+  autoload -Uz add-zsh-hook
+
+  # Add hook for calling git-info before each command.
+  add-zsh-hook precmd prompt_orgmir_precmd
+
+  # Set git-info parameters.
+  zstyle ':prezto:module:git:info' verbose 'yes'
+  zstyle ':prezto:module:git:info:branch' format '%b'
+  zstyle ':prezto:module:git:info:clean' format '%F{green}✔%f '
+  zstyle ':prezto:module:git:info:dirty' format '%F{red}✗%f '
+  zstyle ':prezto:module:git:info:keys' format \
+    'prompt' '%F{63}git:(%f%F{167}$(coalesce "%b" "%p" "%c")%f%F{63})%f ${git_info[rprompt]}%s' \
+    'rprompt' '%C%D'
+
+  # Define prompts.
+  PROMPT='%F{bold}%F{green}➜%f  %F{cyan}%1d%f ${(e)git_info[prompt]}%f'
+  RPROMPT=''
+}
+
+prompt_orgmir_setup "$@"
